@@ -174,3 +174,10 @@ You can use Postman or any other API testing tool to test the endpoints. Here ar
 Add a transaction using POST /transactions.
 Retrieve all transactions using GET /transactions.
 Get a summary using GET /transactions/summary.
+
+Report End point -----------------
+
+Get Transaction Summary (GET /report)
+URL: /api/transactions/report
+params : year,month
+Method: GET

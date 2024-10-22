@@ -144,6 +144,34 @@ router.get("/summary", async (req: Request, res: Response) => {
   }
 });
 
-// The rest of the routes remain unchanged...
+// GET /transactions/report - Generate monthly spending report
+router.get("/report", async (req: Request, res: Response) => {
+  try {
+    const { year, month } = req.query;
+
+    const startDate = new Date(`${year}-${month}-01T00:00:00.000Z`);
+    const endDate = new Date(startDate);
+    endDate.setMonth(endDate.getMonth() + 1);
+
+    const transactions = await Transaction.find({
+      user: req.body.userId,
+      date: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+    });
+
+    const report = transactions.reduce((acc: any, transaction: any) => {
+      acc[transaction.category] =
+        (acc[transaction.category] || 0) + transaction.amount;
+      return acc;
+    }, {});
+
+    res.status(200).json(report);
+  } catch (error: any) {
+    logger.error(`Failed to generate report: ${error.message}`);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
 
 export default router;
